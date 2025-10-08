@@ -29,7 +29,7 @@ export default function CategoryCarousel({ categories }: { categories: any[] }) 
       >
         {categories.map((category) => (
           <div key={category.id} className="snap-center shrink-0 w-64 sm:w-72 md:w-80">
-            <CategoryCard id={category.id} name={category.name} image={category.image} />
+            <CategoryCard id={category.id} name={category.name} images={category.image} slug="" />
           </div>
         ))}
       </div>

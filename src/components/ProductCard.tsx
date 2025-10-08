@@ -1,35 +1,38 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
+import { Product } from "@/app/types/product";
 
-type ProductCardProps = {
-  id: number;
-  title: string;
-  image: string;
-  price: number;
-};
-
-export default function ProductCard({ id, title, image, price }: ProductCardProps) {
+export default function ProductCard({ id, title, images, price, category }: Product) {
   const router = useRouter();
 
   const handleNavigate = () => {
-    router.push(`/products/${id}`);
+    router.push(`/store/${id}`);
   };
 
   return (
-    <div className="relative bg-white border border-gray-200 rounded-2xl shadow-md dark:bg-gray-800 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      {/* Gambar produk */}
-      <img className="object-cover w-full h-64 sm:h-72 md:h-80 rounded-t-2xl" src={image} alt={title} />
+    <div
+      key={id}
+      className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1
+                 transition-all duration-300 overflow-hidden group flex flex-col"
+    >
+      {/* 🖼️ Product Image */}
+      <div className="relative w-full h-48 overflow-hidden">
+        <img src={images?.[0] || "/no-image.png"} alt={title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" />
+      </div>
 
-      {/* Info produk */}
-      <div className="flex flex-col gap-2 px-4 py-3">
-        <h1 className="text-base font-semibold text-gray-900 dark:text-white line-clamp-1">{title}</h1>
+      {/* 🧾 Product Info */}
+      <div className="p-4 flex flex-col flex-grow justify-between">
+        <div>
+          <h2 className="font-semibold text-lg mb-1 line-clamp-2">{title}</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 mb-3">{typeof category === "object" ? category?.name : category || "Uncategorized"}</p>
+        </div>
 
-        <div className="flex justify-between items-center">
-          <span className="text-indigo-600 dark:text-indigo-400 font-semibold text-lg">${price}</span>
-
-          <button className="bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-700 transition duration-300" onClick={handleNavigate}>
-            Details
+        <div className="flex items-center justify-between mt-auto">
+          <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">${price}</span>
+          <button onClick={handleNavigate} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-3 py-2 rounded-lg transition-all">
+            Detail
           </button>
         </div>
       </div>

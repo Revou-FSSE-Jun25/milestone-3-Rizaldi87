@@ -23,12 +23,12 @@ export default function PopularProducts({ products }: { products: any[] }) {
       {/* Container slider */}
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 px-4 pb-4 w-full
-                       [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 px-4 pb-4
+                   [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {products.slice(0, 5).map((product) => (
-          <div key={product.id} className="snap-center shrink-0 w-64 sm:w-72 md:w-80">
-            <ProductCard id={product.id} title={product.title} image={product.images[0]} price={product.price} />
+        {products.slice(0, 10).map((product) => (
+          <div key={product.id} className="snap-center flex-shrink-0 w-[260px] sm:w-[280px] md:w-[300px]">
+            <ProductCard {...product} />
           </div>
         ))}
       </div>
