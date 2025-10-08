@@ -1,4 +1,4 @@
-import NavBar from "@/components/NaviBar";
+import NavBar from "@/components/NavBar";
 import PopularProducts from "@/components/PopularProducts";
 import CategoryCarousel from "@/components/CategoryCarousel";
 import Link from "next/link";

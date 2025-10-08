@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/app/types/product";
-import Navbar from "@/components/NaviBar";
+import Navbar from "@/components/NavBar";
 
 export default function CartPage() {
   const [cart, setCart] = useState<Product[]>([]);

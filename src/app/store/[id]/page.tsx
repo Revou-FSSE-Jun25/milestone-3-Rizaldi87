@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Navbar from "@/components/NaviBar";
+import Navbar from "@/components/NavBar";
 import { Product } from "@/app/types/product";
 import ProductImages from "@/components/ProductImage";
 import Link from "next/link";

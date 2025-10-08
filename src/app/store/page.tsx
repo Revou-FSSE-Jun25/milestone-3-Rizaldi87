@@ -1,4 +1,4 @@
-import Navbar from "@/components/NaviBar";
+import Navbar from "@/components/NavBar";
 import ProductCard from "@/components/ProductCard";
 
 // Fetch Produk (pakai SSG + revalidate)
