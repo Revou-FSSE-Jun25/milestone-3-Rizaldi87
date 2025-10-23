@@ -1,15 +1,22 @@
 "use client";
 
+import { getCookie, isAuthenticated, logout } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const router = useRouter;
   const pathName = usePathname();
   const [cartCount, setCartCount] = useState<number>(0);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Ambil jumlah item cart dari localStorage
   useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+    setIsAdmin(getCookie("role") === "admin");
     function updateCartCount() {
       const stored = localStorage.getItem("cart");
       const cart = stored ? JSON.parse(stored) : [];
@@ -27,11 +34,16 @@ export default function Navbar() {
     return () => window.removeEventListener("storage", updateCartCount);
   }, []);
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/store", label: "Store" },
-    { href: "/cart", label: "Cart" },
-  ];
+  const navLinks = [{ href: "/", label: "Home" }, ...(isLoggedIn && isAdmin ? [{ href: "/admin", label: "Admin" }] : [{ href: "/store", label: "Store" }]), { href: "/cart", label: "Cart" }];
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggedIn(false);
+      logout(router);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 z-50 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm transition-colors">
@@ -58,9 +70,15 @@ export default function Navbar() {
 
         {/* 👤 Action Buttons */}
         <div className="flex items-center gap-4">
-          <Link href="/login" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium">
-            Login
-          </Link>
+          {isLoggedIn ? (
+            <button onClick={handleLogout} className="px-4 py-2  text-gray-700 dark:text-gray-500 rounded-lg hover:bg-gray-100 transition font-medium">
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>

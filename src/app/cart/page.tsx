@@ -5,11 +5,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/app/types/product";
 import Navbar from "@/components/NavBar";
+import { isAuthenticated } from "@/lib/auth";
 
 export default function CartPage() {
   const [cart, setCart] = useState<Product[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
     const stored = localStorage.getItem("cart");
     if (stored) {
       setCart(JSON.parse(stored));
@@ -34,10 +37,14 @@ export default function CartPage() {
   };
 
   const checkOut = () => {
-    localStorage.removeItem("cart");
-    setCart([]);
-    window.dispatchEvent(new Event("cartUpdated"));
-    alert("Checkout Success!");
+    if (!isLoggedIn) {
+      alert("Please Login First!");
+    } else {
+      localStorage.removeItem("cart");
+      setCart([]);
+      window.dispatchEvent(new Event("cartUpdated"));
+      alert("Checkout Success!");
+    }
   };
 
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toLocaleString();

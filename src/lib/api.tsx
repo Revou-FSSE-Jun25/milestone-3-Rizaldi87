@@ -1,5 +1,6 @@
 import { Product, ProductFormData } from "@/app/types/product";
 import axios from "axios";
+import { getCookie } from "./auth";
 
 const DUMMYJSON_API_BASE = "https://api.escuelajs.co/api/v1";
 
@@ -86,6 +87,55 @@ export async function deleteProduct(id: number): Promise<void> {
     throw new Error("Failed to delete product");
   }
 }
+
+//Data user admin
+//{
+//   "id": 4,
+//   "email": "john@mail.com",
+//   "password": "1234",
+//   "name": "Change name",
+//   "role": "admin",
+//   "avatar": "https://i.imgur.com/yhW6Yw1.jpg"
+// }
+
+export const login = async (email: string, password: string) => {
+  const res = await fetch(`${DUMMYJSON_API_BASE}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      expiresInMins: 30,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Gagal login");
+  }
+
+  return res.json();
+};
+
+export const getCurrentUser = async () => {
+  const token = getCookie("access_token");
+
+  const res = await fetch(`${DUMMYJSON_API_BASE}/auth/profile`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("Login gagal:", res.status, errText);
+    throw new Error("Gagal login");
+  }
+
+  return res.json();
+};
 
 // export async function searchProducts(query: string): Promise<ProductsResponse> {
 //   try {

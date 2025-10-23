@@ -6,6 +6,7 @@ import Navbar from "@/components/NavBar";
 import { Product } from "@/app/types/product";
 import { useRouter } from "next/navigation";
 import { deleteProduct } from "@/lib/api";
+import { getCookie, isAuthenticated } from "@/lib/auth";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -18,6 +19,16 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function fetchProducts() {
+      if (!isAuthenticated()) {
+        router.push("/login");
+        return;
+      }
+
+      if (getCookie("role") !== "admin") {
+        router.push("/home");
+        return;
+      }
+
       try {
         const res = await fetch("https://api.escuelajs.co/api/v1/products");
         if (!res.ok) throw new Error("Failed to fetch products");

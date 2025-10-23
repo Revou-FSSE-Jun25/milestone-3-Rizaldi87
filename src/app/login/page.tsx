@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
+import { getCookie, isAuthenticated, setCookie } from "@/lib/auth";
+import { getCurrentUser, login } from "@/lib/api";
+import { set } from "react-hook-form";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,7 +14,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isAuthenticated()) {
+      if (getCookie("role") === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/store");
+      }
+    }
+  }, [router]);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Contoh validasi sederhana
@@ -20,12 +32,23 @@ export default function LoginPage() {
       return;
     }
 
-    // Contoh login dummy: email admin@example.com, password 123456
-    if (email === "rizaldiganteng@example.com" && password === "123456") {
-      setError("");
-      alert("Login successful!");
-      router.push("/admin"); // redirect ke home
-    } else {
+    try {
+      const data = await login(email, password);
+
+      setCookie("access_token", data.access_token, 30);
+      setCookie("refresh_token", data.refresh_token, 30);
+
+      const user = await getCurrentUser();
+      setCookie("email", user.email, 30);
+      setCookie("role", user.role, 30);
+      setCookie("name", user.name, 30);
+
+      if (user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/store");
+      }
+    } catch (err) {
       setError("Invalid email or password.");
     }
   };
