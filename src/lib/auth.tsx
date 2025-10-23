@@ -5,7 +5,6 @@ export const setCookie = (name: string, value: string, minutes: number = 30) => 
 };
 
 export const getCookie = (name: string): string | null => {
-  console.log("getCookie", document.cookie);
   return (
     document.cookie
       .split("; ")

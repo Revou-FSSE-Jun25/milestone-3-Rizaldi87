@@ -1,32 +1,12 @@
-import Image from "next/image";
 import Navbar from "@/components/NavBar";
-import { Product } from "@/app/types/product";
 import ProductImages from "@/components/ProductImage";
 import Link from "next/link";
 import AddToCartButton from "@/components/AddToCartButton";
+import { getProduct } from "@/lib/api";
 
-async function getProductById(id: string): Promise<Product | null> {
-  try {
-    const res = await fetch(`https://api.escuelajs.co/api/v1/products/${id}`, {
-      cache: "no-store", // SSR
-    });
-    if (!res.ok) throw new Error("Gagal mengambil data produk");
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("❌ Gagal mengambil data produk:", error);
-    return null;
-  }
-}
-
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
-  const productId = await params.id;
-  const product = await getProductById(productId);
-
-  function changeImage(img: string) {
-    const imageElement = document.getElementById("product-image") as HTMLImageElement;
-    imageElement.src = img;
-  }
+export default async function ProductDetailPage({ params }: { params: { id: number } }) {
+  const { id } = await params;
+  const product = await getProduct(id);
 
   if (!product) {
     return <div className="text-center text-red-600 p-10">Produk tidak ditemukan 😢</div>;

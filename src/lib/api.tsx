@@ -16,6 +16,20 @@ const DUMMYJSON_API_BASE = "https://api.escuelajs.co/api/v1";
 //   }
 // }
 
+export async function getProducts() {
+  try {
+    const res = await fetch(`${DUMMYJSON_API_BASE}/products`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) throw new Error("Gagal mengambil data produk");
+    return res.json();
+  } catch (error) {
+    console.error("❌ Gagal mengambil data produk:", error);
+    return null;
+  }
+}
+
 // TODO 4: Implement getProduct function to fetch single product
 // Use axios to fetch one product by ID from DummyJSON
 export async function getProduct(id: number): Promise<Product> {

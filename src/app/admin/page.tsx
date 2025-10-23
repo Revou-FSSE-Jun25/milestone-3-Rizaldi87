@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/NavBar";
 import { Product } from "@/app/types/product";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { deleteProduct } from "@/lib/api";
 import { getCookie, isAuthenticated } from "@/lib/auth";
+import Pagination from "@/components/Pagination";
+import ProductSearch from "@/components/ProductSearch";
+import Loading from "@/components/Loading";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -16,6 +19,9 @@ export default function AdminDashboard() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // tampilkan 8 produk per halaman
+
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
 
   useEffect(() => {
     async function fetchProducts() {
@@ -30,7 +36,9 @@ export default function AdminDashboard() {
       }
 
       try {
-        const res = await fetch("https://api.escuelajs.co/api/v1/products");
+        const res = await fetch("https://api.escuelajs.co/api/v1/products", {
+          next: { revalidate: 60 },
+        });
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
         setProducts(data);
@@ -42,7 +50,7 @@ export default function AdminDashboard() {
     }
 
     fetchProducts();
-  }, []);
+  }, [searchQuery]);
 
   const handleDelete = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -55,11 +63,13 @@ export default function AdminDashboard() {
     }
   };
 
+  const filteredProducts = searchQuery ? products.filter((p) => p.title.toLowerCase().includes(searchQuery)) : products;
+
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = products.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -74,11 +84,13 @@ export default function AdminDashboard() {
         </div>
 
         {loading ? (
-          <p className="text-center text-gray-600 dark:text-gray-300">Loading products...</p>
-        ) : products.length === 0 ? (
+          <Loading />
+        ) : filteredProducts.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-300">No products found.</p>
         ) : (
           <>
+            <ProductSearch />
+
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {currentProducts.map((product) => (
                 <div key={product.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 hover:shadow-xl transition-all">
@@ -99,23 +111,7 @@ export default function AdminDashboard() {
                 </div>
               ))}
             </div>
-
-            {/* Pagination controls */}
-            <div className="flex justify-center gap-2 mt-6">
-              <button disabled={currentPage === 1} onClick={() => setCurrentPage((prev) => prev - 1)} className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded-md hover:bg-gray-400 disabled:opacity-50">
-                Prev
-              </button>
-
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button key={i} onClick={() => setCurrentPage(i + 1)} className={`px-4 py-2 rounded-md ${currentPage === i + 1 ? "bg-indigo-600 text-white" : "bg-gray-300 dark:bg-gray-700 hover:bg-gray-400"}`}>
-                  {i + 1}
-                </button>
-              ))}
-
-              <button disabled={currentPage === totalPages} onClick={() => setCurrentPage((prev) => prev + 1)} className="px-4 py-2 bg-gray-300 dark:bg-gray-700 rounded-md hover:bg-gray-400 disabled:opacity-50">
-                Next
-              </button>
-            </div>
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={totalPages} />
           </>
         )}
       </main>

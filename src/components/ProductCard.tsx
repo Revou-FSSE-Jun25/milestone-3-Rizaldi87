@@ -3,6 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/app/types/product";
+import Image from "next/image";
 
 export default function ProductCard({ id, title, images, price, category }: Product) {
   const router = useRouter();
@@ -13,13 +14,23 @@ export default function ProductCard({ id, title, images, price, category }: Prod
 
   return (
     <div
-      key={id}
       className="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1
                  transition-all duration-300 overflow-hidden group flex flex-col"
     >
       {/* 🖼️ Product Image */}
       <div className="relative w-full h-48 overflow-hidden">
-        <img src={images?.[0] || "/no-image.png"} alt={title} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" />
+        <Image
+          src={images?.[0] || "/no-image.png"}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw,
+                 (max-width: 1200px) 50vw,
+                 25vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          placeholder="blur"
+          blurDataURL="/blur-placeholder.png"
+          unoptimized // bisa bikin gambar blur 1x1px
+        />
       </div>
 
       {/* 🧾 Product Info */}

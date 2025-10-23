@@ -6,12 +6,14 @@ import Navbar from "@/components/NavBar";
 import { getCookie, isAuthenticated, setCookie } from "@/lib/auth";
 import { getCurrentUser, login } from "@/lib/api";
 import { set } from "react-hook-form";
+import Loading from "@/components/Loading";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function LoginPage() {
     }
 
     try {
+      setLoading(true);
       const data = await login(email, password);
 
       setCookie("access_token", data.access_token, 30);
@@ -50,8 +53,14 @@ export default function LoginPage() {
       }
     } catch (err) {
       setError("Invalid email or password.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">

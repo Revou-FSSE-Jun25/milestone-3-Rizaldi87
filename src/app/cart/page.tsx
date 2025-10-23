@@ -1,53 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Product } from "@/app/types/product";
-import Navbar from "@/components/NavBar";
+import { useCart } from "@/context/CartContext";
 import { isAuthenticated } from "@/lib/auth";
+import { useState, useEffect } from "react";
+import Navbar from "@/components/NavBar";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function CartPage() {
-  const [cart, setCart] = useState<Product[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { cart, removeFromCart, changeQuantity, clearCart, totalPrice } = useCart();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(isAuthenticated());
-    const stored = localStorage.getItem("cart");
-    if (stored) {
-      setCart(JSON.parse(stored));
-    }
   }, []);
-
-  const removeFromCart = (id: number) => {
-    // Ambil cart dari localStorage
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    // Filter item yang ingin dihapus
-    const updatedCart = cart.filter((item: any) => item.id !== id);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    setCart(updatedCart);
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
-
-  const changeQuantity = (id: number, delta: number) => {
-    const updated = cart.map((item) => (item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item));
-    localStorage.setItem("cart", JSON.stringify(updated));
-    setCart(updated);
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
 
   const checkOut = () => {
     if (!isLoggedIn) {
       alert("Please Login First!");
-    } else {
-      localStorage.removeItem("cart");
-      setCart([]);
-      window.dispatchEvent(new Event("cartUpdated"));
-      alert("Checkout Success!");
+      return;
     }
+    clearCart();
+    alert("Checkout Success!");
   };
-
-  const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toLocaleString();
 
   return (
     <div className="font-sans min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -78,7 +53,6 @@ export default function CartPage() {
                     Remove
                   </button>
 
-                  {/* quantity */}
                   <div className="ml-4 flex items-center gap-2">
                     <button
                       onClick={() => changeQuantity(item.id, -1)}
@@ -86,9 +60,7 @@ export default function CartPage() {
                     >
                       −
                     </button>
-                    <p id="quantity" className="w-6 text-center text-gray-600 dark:text-gray-300 font-medium">
-                      {item.quantity}
-                    </p>
+                    <p className="w-6 text-center text-gray-600 dark:text-gray-300 font-medium">{item.quantity}</p>
                     <button
                       onClick={() => changeQuantity(item.id, 1)}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
@@ -101,7 +73,7 @@ export default function CartPage() {
             ))}
 
             <div className="flex justify-end mt-4">
-              <p className="text-gray-600 dark:text-gray-300 text-sm">Total: ${totalPrice} </p>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">Total: ${totalPrice.toLocaleString()}</p>
             </div>
 
             <div className="flex justify-end mt-4">
