@@ -14,7 +14,7 @@ export default function ProductImages({ images, title }: Props) {
   return (
     <div className="w-full">
       <div className="relative w-full aspect-square overflow-hidden rounded-2xl shadow-lg group">
-        <Image src={currentImage} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+        <Image src={currentImage} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
       </div>
 
       {images?.length > 1 && (

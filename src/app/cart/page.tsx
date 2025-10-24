@@ -6,8 +6,10 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/NavBar";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
+  const router = useRouter();
   const { cart, removeFromCart, changeQuantity, clearCart, totalPrice } = useCart();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -20,8 +22,9 @@ export default function CartPage() {
       alert("Please Login First!");
       return;
     }
+    router.push("/checkout");
     clearCart();
-    alert("Checkout Success!");
+    // alert("Checkout Success!");
   };
 
   return (
@@ -42,7 +45,7 @@ export default function CartPage() {
             {cart.map((item) => (
               <div key={item.id} className="flex items-center justify-between bg-white dark:bg-gray-800 shadow p-4 rounded-lg">
                 <div className="flex items-center gap-4">
-                  <Image src={item.images[0]} alt={item.title} width={60} height={60} className="rounded-md object-cover" />
+                  <Image src={item.images[0]} alt={item.title} width={60} height={60} className="rounded-md object-cover" unoptimized />
                   <div>
                     <h2 className="font-semibold dark:text-white">{item.title}</h2>
                     <p className="text-gray-600 dark:text-gray-300 text-sm">$ {item.price.toLocaleString()}</p>
