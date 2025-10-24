@@ -7,27 +7,16 @@
 This project is an simple **E-Commerce Web** built using **Next.js** with **TypeScript** and **Tailwind CSS**.  
 It provides a platform for all users to browse products, view details, and for admins to manage products including create, update, and delete. The project integrates with a public API (**Platzi Fake Store API**) to fetch product and category data.
 
-<details>
-  <summary><strong>🔐 Admin Login Information (Click to Show)</strong></summary>
-
-  <br>
-  <p>For admin login use this:</p>
-
-**Email:** rizaldiganteng@example.com  
- **Password:** 123456
-
-</details>
-
 ## Features Implemented
 
 | Feature         | Description                                                 | Access    |
 | --------------- | ----------------------------------------------------------- | --------- |
+| Authentication  | Simple user login and logout with platzi api                | All users |
 | Product Listing | Displays all products with images, price, and category      | All users |
 | Product Details | View detailed information for a single product              | All users |
 | Search & Filter | Search products by name or filter by category               | All users |
 | Add Product     | Create new products with title, price, category, and images | Admin     |
 | Edit Product    | Update existing product information                         | Admin     |
-| Delete Product  | Remove products from the dashboard                          | Admin     |
 
 ## Technologies Used
 
