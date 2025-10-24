@@ -95,25 +95,33 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
       {error && <p className="text-red-500">{error}</p>}
 
       <div>
-        <label className="block mb-1 font-medium">Title</label>
-        <input {...register("title", { required: "Title required" })} className="w-full border p-2 rounded-md" />
+        <label htmlFor="title" className="block mb-1 font-medium">
+          Title
+        </label>
+        <input id="title" {...register("title", { required: "Title required" })} className="w-full border p-2 rounded-md" />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Price</label>
-        <input type="number" {...register("price", { required: true, min: 0 })} className="w-full border p-2 rounded-md" />
+        <label htmlFor="price" className="block mb-1 font-medium">
+          Price
+        </label>
+        <input id="price" type="number" {...register("price", { required: true, min: 0 })} className="w-full border p-2 rounded-md" />
         {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Description</label>
-        <textarea {...register("description")} className="w-full border p-2 rounded-md" />
+        <label htmlFor="description" className="block mb-1 font-medium">
+          Description
+        </label>
+        <textarea id="description" {...register("description")} className="w-full border p-2 rounded-md" />
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Category</label>
-        <select {...register("categoryId", { required: true })} className="w-full border p-2 rounded-md">
+        <label htmlFor="categoryId" className="block mb-1 font-medium">
+          Category
+        </label>
+        <select id="categoryId" {...register("categoryId", { required: true })} className="w-full border p-2 rounded-md">
           <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
@@ -124,8 +132,10 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
       </div>
 
       <div>
-        <label className="block mb-1 font-medium">Images (comma separated URLs)</label>
-        <input {...register("images")} className="w-full border p-2 rounded-md" placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg" />
+        <label htmlFor="images" className="block mb-1 font-medium">
+          Images (comma separated URLs)
+        </label>
+        <input id="images" {...register("images")} className="w-full border p-2 rounded-md" placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg" />
       </div>
 
       <div className="flex gap-4">

@@ -26,6 +26,7 @@ export default function ProductSearch() {
   return (
     <form onSubmit={handleSearch} className="flex gap-2 items-center w-full max-w-md mx-auto mb-8">
       <input
+        role="search"
         type="text"
         placeholder="🔍 Cari produk..."
         value={query}
