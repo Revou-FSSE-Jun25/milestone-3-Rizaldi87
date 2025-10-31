@@ -1,6 +1,7 @@
 import Navbar from "@/components/NavBar";
 
 import ProductList from "@/components/ProductList";
+import ProductSearch from "@/components/ProductSearch";
 
 export default async function StorePage() {
   return (
@@ -14,6 +15,8 @@ export default async function StorePage() {
               Only Best Products in <span className="font-semibold">RevoShop</span>
             </p>
           </div>
+
+          <ProductSearch />
 
           <ProductList />
         </div>

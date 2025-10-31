@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/NavBar";
 import { Product } from "@/app/types/product";
 import { useRouter, useSearchParams } from "next/navigation";
-import { deleteProduct } from "@/lib/api";
+import { deleteProduct, getProducts } from "@/lib/api";
 import Pagination from "@/components/Pagination";
 import ProductSearch from "@/components/ProductSearch";
 import Loading from "@/components/Loading";
@@ -24,12 +24,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("https://api.escuelajs.co/api/v1/products", {
-          next: { revalidate: 60 },
-        });
-        if (!res.ok) throw new Error("Failed to fetch products");
-        const data = await res.json();
-        setProducts(data);
+        const res = await getProducts();
+        // if (!res.ok) throw new Error("Failed to fetch products");
+
+        setProducts(res);
       } catch (error) {
         console.error(error);
       } finally {

@@ -16,22 +16,22 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
 
-  if (pathname.startsWith("/login") && accessToken && refreshToken) {
-    try {
-      const res = await fetch("https://api.escuelajs.co/api/v1/auth/profile", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      if (res.ok) {
-        const user = await res.json();
-        const redirectTo = user.role === "admin" ? "/admin" : "/store";
-        return NextResponse.redirect(new URL(redirectTo, request.url));
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-    }
-  }
+  // if (pathname.startsWith("/login") && accessToken && refreshToken) {
+  //   try {
+  //     const res = await fetch("https://api.escuelajs.co/api/v1/auth/profile", {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
+  //     if (res.ok) {
+  //       const user = await res.json();
+  //       const redirectTo = user.role === "admin" ? "/admin" : "/store";
+  //       return NextResponse.redirect(new URL(redirectTo, request.url));
+  //     }
+  //   } catch (error) {
+  //     console.error("Auth check failed:", error);
+  //   }
+  // }
 
   if (PUBLIC_ROUTES.includes(pathname)) return NextResponse.next();
 

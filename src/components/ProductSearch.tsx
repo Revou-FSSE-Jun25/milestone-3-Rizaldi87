@@ -2,16 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getCookie } from "@/lib/auth";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProductSearch() {
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin } = useAuth();
 
-  useEffect(() => {
-    setIsAdmin(getCookie("role") === "admin");
-  }, []);
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) {

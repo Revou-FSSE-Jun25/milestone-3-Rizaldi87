@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import { getCurrentUser, login } from "@/lib/api";
@@ -8,7 +8,7 @@ import Loading from "@/components/Loading";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
-  const { refetch } = useAuth();
+  const { refetch, isAdmin, loading, isLoggedIn } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -16,6 +16,12 @@ export default function LoginPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!loading && isLoggedIn) {
+      if (isAdmin) router.push("/admin");
+      else router.push("/store");
+    }
+  }, [loading, isLoggedIn, isAdmin]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
@@ -26,11 +32,11 @@ export default function LoginPage() {
       setLoading(true);
       await login(email, password);
 
-      const data = await getCurrentUser();
+      // const data = await getCurrentUser();
       await refetch();
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      router.push(data.user.role === "admin" ? "/admin" : "/store");
-      // window.location.href = data.user.role === "admin" ? "/admin" : "/store";
+      // await new Promise((resolve) => setTimeout(resolve, 100));
+      // router.push(data.user.role === "admin" ? "/admin" : "/store");
+      // // window.location.href = data.user.role === "admin" ? "/admin" : "/store";
     } catch {
       setError("Invalid email or password.");
     } finally {
