@@ -2,39 +2,36 @@ import { Product, ProductFormData } from "@/app/types/product";
 import axios from "axios";
 import { getCookie } from "./auth";
 
-const DUMMYJSON_API_BASE = "https://api.escuelajs.co/api/v1";
-
-// TODO 3: Implement getProducts function to fetch all products
-// Use axios to fetch from DummyJSON and return ProductsResponse
-// export async function getProducts(): Promise<ProductsResponse> {
-//   try {
-//     const response = await axios.get(`${DUMMYJSON_API_BASE}/products?limit=10`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error fetching products:', error);
-//     throw new Error('Failed to fetch products');
-//   }
-// }
+axios.defaults.withCredentials = true;
 
 export async function getProducts() {
   try {
-    const res = await fetch(`${DUMMYJSON_API_BASE}/products`, {
-      next: { revalidate: 60 },
-    });
-
-    if (!res.ok) throw new Error("Gagal mengambil data produk");
-    return res.json();
+    const res = await axios.get(`/api/products`);
+    return res.data;
   } catch (error) {
     console.error("❌ Gagal mengambil data produk:", error);
     return null;
   }
 }
 
+export async function getCategories() {
+  try {
+    const res = await axios.get(`/api/categories`);
+    return res.data;
+  } catch (error) {
+    console.error("❌ Gagal mengambil data kategori:", error);
+    return null;
+  }
+}
+
 // TODO 4: Implement getProduct function to fetch single product
 // Use axios to fetch one product by ID from DummyJSON
-export async function getProduct(id: number): Promise<Product> {
+export async function getProduct(id: string): Promise<Product> {
+  if (!id) {
+    throw new Error(" ID produk tidak valid");
+  }
   try {
-    const response = await axios.get(`${DUMMYJSON_API_BASE}/products/${id}`);
+    const response = await axios.get(`/api/products/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching product:", error);
@@ -60,7 +57,7 @@ export async function createProduct(data: ProductFormData): Promise<Product> {
         : [],
     };
 
-    const response = await axios.post(`${DUMMYJSON_API_BASE}/products/`, productData);
+    const response = await axios.post(`/api/products/`, productData);
     return response.data;
   } catch (error) {
     console.error("Error creating product:", error);
@@ -85,7 +82,7 @@ export async function updateProduct(id: number, data: Partial<ProductFormData>):
         : undefined,
     };
 
-    const response = await axios.put(`${DUMMYJSON_API_BASE}/products/${id}`, productData);
+    const response = await axios.put(`/api/products/${id}`, productData);
     return response.data;
   } catch (error) {
     console.error("Error updating product:", error);
@@ -95,7 +92,7 @@ export async function updateProduct(id: number, data: Partial<ProductFormData>):
 
 export async function deleteProduct(id: number): Promise<void> {
   try {
-    await axios.delete(`${DUMMYJSON_API_BASE}/products/${id}`);
+    await axios.delete(`/api/products/${id}`);
   } catch (error) {
     console.error("Error deleting product:", error);
     throw new Error("Failed to delete product");
@@ -113,42 +110,24 @@ export async function deleteProduct(id: number): Promise<void> {
 // }
 
 export const login = async (email: string, password: string) => {
-  const res = await fetch(`${DUMMYJSON_API_BASE}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      email,
-      password,
-      expiresInMins: 30,
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Gagal login");
+  try {
+    const res = await axios.post("/api/auth/login", { email, password });
+    return res.data;
+  } catch (error) {
+    console.error("Error during login:", error);
+    throw new Error("Login failed");
   }
-
-  return res.json();
 };
 
 export const getCurrentUser = async () => {
-  const token = getCookie("access_token");
+  try {
+    const res = await axios.get("/api/auth/profile");
 
-  const res = await fetch(`${DUMMYJSON_API_BASE}/auth/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Login gagal:", res.status, errText);
-    throw new Error("Gagal login");
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+    return null;
   }
-
-  return res.json();
 };
 
 // export async function searchProducts(query: string): Promise<ProductsResponse> {

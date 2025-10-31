@@ -14,7 +14,11 @@ export default function CartPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    setIsLoggedIn(isAuthenticated());
+    const checkAuth = async () => {
+      const auth = await isAuthenticated();
+      setIsLoggedIn(auth);
+    };
+    checkAuth();
   }, []);
 
   const checkOut = () => {

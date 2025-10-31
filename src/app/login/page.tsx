@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
-import { getCookie, isAuthenticated, setCookie } from "@/lib/auth";
 import { getCurrentUser, login } from "@/lib/api";
 import Loading from "@/components/Loading";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
+  const { refetch } = useAuth();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -15,33 +16,21 @@ export default function LoginPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (isAuthenticated()) {
-      const role = getCookie("role");
-      router.push(role === "admin" ? "/admin" : "/store");
-    }
-  }, [router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Please enter email and password.");
-      return;
+      return setError("Please enter email and password.");
     }
 
     try {
       setLoading(true);
-      const data = await login(email, password);
+      await login(email, password);
 
-      setCookie("access_token", data.access_token, 30);
-      setCookie("refresh_token", data.refresh_token, 30);
-
-      const user = await getCurrentUser();
-      setCookie("email", user.email, 30);
-      setCookie("role", user.role, 30);
-      setCookie("name", user.name, 30);
-
-      router.push(user.role === "admin" ? "/admin" : "/store");
+      const data = await getCurrentUser();
+      await refetch();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      router.push(data.user.role === "admin" ? "/admin" : "/store");
+      // window.location.href = data.user.role === "admin" ? "/admin" : "/store";
     } catch {
       setError("Invalid email or password.");
     } finally {

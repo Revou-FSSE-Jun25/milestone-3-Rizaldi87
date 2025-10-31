@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { set, useForm } from "react-hook-form";
 import { Product, ProductFormData, Category } from "@/app/types/product";
 import { createProduct, updateProduct } from "@/lib/api";
+import Loading from "./Loading";
 
 interface ProductFormProps {
   product?: Product;
@@ -90,6 +91,8 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
     })();
   }, [product, reset]);
 
+  if (loading) return <Loading />;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg space-y-4">
       {error && <p className="text-red-500">{error}</p>}
@@ -98,7 +101,17 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         <label htmlFor="title" className="block mb-1 font-medium">
           Title
         </label>
-        <input id="title" {...register("title", { required: "Title required" })} className="w-full border p-2 rounded-md" />
+        <input
+          id="title"
+          {...register("title", {
+            required: "Title required",
+            minLength: {
+              value: 3,
+              message: "Title must be at least 3 characters",
+            },
+          })}
+          className="w-full border p-2 rounded-md"
+        />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
 
@@ -106,7 +119,18 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         <label htmlFor="price" className="block mb-1 font-medium">
           Price
         </label>
-        <input id="price" type="number" {...register("price", { required: true, min: 0 })} className="w-full border p-2 rounded-md" />
+        <input
+          id="price"
+          type="number"
+          {...register("price", {
+            required: "price required",
+            min: {
+              value: 1,
+              message: "Price must be at least $ 1.00",
+            },
+          })}
+          className="w-full border p-2 rounded-md"
+        />
         {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
       </div>
 
@@ -114,14 +138,32 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
         <label htmlFor="description" className="block mb-1 font-medium">
           Description
         </label>
-        <textarea id="description" {...register("description")} className="w-full border p-2 rounded-md" />
+        <textarea
+          id="description"
+          {...register("description", {
+            required: "Description required",
+            minLength: {
+              value: 10,
+              message: "Description must be at least 10 characters",
+            },
+          })}
+          className="w-full border p-2 rounded-md"
+        />
+        {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>
 
       <div>
         <label htmlFor="categoryId" className="block mb-1 font-medium">
           Category
         </label>
-        <select id="categoryId" {...register("categoryId", { required: true })} className="w-full border p-2 rounded-md">
+        <select
+          id="categoryId"
+          {...register("categoryId", {
+            required: true,
+            valueAsNumber: true,
+          })}
+          className="w-full border p-2 rounded-md"
+        >
           <option value="">Select category</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
@@ -129,13 +171,27 @@ export default function ProductForm({ product, onSuccess, onCancel }: ProductFor
             </option>
           ))}
         </select>
+        {errors.categoryId && <p className="text-red-500 text-sm">{errors.categoryId.message}</p>}
       </div>
 
       <div>
         <label htmlFor="images" className="block mb-1 font-medium">
           Images (comma separated URLs)
         </label>
-        <input id="images" {...register("images")} className="w-full border p-2 rounded-md" placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg" />
+        <input
+          id="images"
+          {...register("images", {
+            required: "at least one image URL required",
+            // validate: (value) => {
+            //   const urls = value.split(",");
+            //   const regex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif)$/i;
+            //   return urls.every((url) => regex.test(url.trim())) || "Image URLs are invalid";
+            // },
+          })}
+          className="w-full border p-2 rounded-md"
+          placeholder="https://picsum.photos/id/237/200/300, https://example.com/img2.jpg"
+        />
+        {errors.images && <p className="text-red-500 text-sm">{errors.images.message}</p>}
       </div>
 
       <div className="flex gap-4">

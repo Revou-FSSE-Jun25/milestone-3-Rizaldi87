@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Navbar from "@/components/NavBar";
 import { Product } from "@/app/types/product";
 import { useRouter, useSearchParams } from "next/navigation";
 import { deleteProduct } from "@/lib/api";
-import { getCookie, isAuthenticated } from "@/lib/auth";
 import Pagination from "@/components/Pagination";
 import ProductSearch from "@/components/ProductSearch";
 import Loading from "@/components/Loading";
@@ -25,16 +23,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function fetchProducts() {
-      if (!isAuthenticated()) {
-        router.push("/login");
-        return;
-      }
-
-      if (getCookie("role") !== "admin") {
-        router.push("/home");
-        return;
-      }
-
       try {
         const res = await fetch("https://api.escuelajs.co/api/v1/products", {
           next: { revalidate: 60 },
@@ -71,6 +59,8 @@ export default function AdminDashboard() {
   const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
+  if (loading) return <Loading />;
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <Navbar />
@@ -78,14 +68,12 @@ export default function AdminDashboard() {
       <main className="mt-12 flex-1 max-w-6xl mx-auto px-6 py-12">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">Admin Dashboard</h1>
-          <Link href="/admin/add-product" className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md">
+          <button onClick={() => router.push("/admin/add-product")} className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition shadow-md">
             + Add Product
-          </Link>
+          </button>
         </div>
 
-        {loading ? (
-          <Loading />
-        ) : filteredProducts.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-300">No products found.</p>
         ) : (
           <>

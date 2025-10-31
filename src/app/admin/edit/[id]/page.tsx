@@ -25,7 +25,7 @@ export default function EditProductPage() {
     try {
       setLoading(true);
       setError(null);
-      const productData = await getProduct(Number(productId));
+      const productData = await getProduct(productId);
       setProduct(productData);
     } catch (err) {
       setError("Failed to fetch product details.");
