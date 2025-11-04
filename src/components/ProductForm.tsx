@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { set, useForm } from "react-hook-form";
 import { Product, ProductFormData, Category } from "@/app/types/product";
 import { createProduct, updateProduct } from "@/lib/api";
-import Loading from "./Loading";
+import Loading from "@/app/loading";
 
 interface ProductFormProps {
   product?: Product;

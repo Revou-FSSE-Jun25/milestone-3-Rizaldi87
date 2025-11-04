@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { getProducts } from "@/lib/api";
-import Loading from "./Loading";
+import Loading from "@/app/loading";
 import Pagination from "./Pagination";
 import ProductSearch from "./ProductSearch";
 import { useSearchParams } from "next/navigation";

@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { deleteProduct, getProducts } from "@/lib/api";
 import Pagination from "@/components/Pagination";
 import ProductSearch from "@/components/ProductSearch";
-import Loading from "@/components/Loading";
+import Loading from "@/app/loading";
 
 export default function AdminDashboard() {
   const router = useRouter();

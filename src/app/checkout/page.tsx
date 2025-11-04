@@ -3,7 +3,7 @@
 import Navbar from "@/components/NavBar";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Loading from "../loading";
+import Loading from ".@/app/loading";
 
 export default function CheckoutPage() {
   const router = useRouter();

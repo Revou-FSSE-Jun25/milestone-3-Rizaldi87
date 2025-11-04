@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Product } from "@/app/types/product";
 import { getProduct } from "@/lib/api";
+import Loading from "@/app/loading";
 
 export default function EditProductPage() {
   const params = useParams();
@@ -47,16 +48,7 @@ export default function EditProductPage() {
 
   const isValidId = /^\d+$/.test(productId);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading product details...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   if (error || !isValidId || !product) {
     return (

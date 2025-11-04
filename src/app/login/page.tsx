@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import { getCurrentUser, login } from "@/lib/api";
-import Loading from "@/components/Loading";
+import Loading from "@/app/loading";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -13,13 +13,11 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (!loading && isLoggedIn) {
-      if (isAdmin) router.push("/admin");
-      else router.push("/store");
+      router.push(isAdmin ? "/admin" : "/store");
     }
   }, [loading, isLoggedIn, isAdmin]);
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,22 +27,14 @@ export default function LoginPage() {
     }
 
     try {
-      setLoading(true);
       await login(email, password);
-
-      // const data = await getCurrentUser();
       await refetch();
-      // await new Promise((resolve) => setTimeout(resolve, 100));
-      // router.push(data.user.role === "admin" ? "/admin" : "/store");
-      // // window.location.href = data.user.role === "admin" ? "/admin" : "/store";
     } catch {
       setError("Invalid email or password.");
-    } finally {
-      setLoading(false);
     }
   };
 
-  if (isLoading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
